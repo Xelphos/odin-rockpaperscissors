@@ -1,61 +1,77 @@
-let userInput = prompt('Enter rock, paper, or scissors', '')
-
-function validatePlayerInput(input) {
-    input = userInput.toLowerCase(); 
-    if (input === 'scissors' || input === 'rock' || input === 'paper') {
-        let result = input;
-        return result;
-    }
-    userInput = prompt('Invalid input! Please enter either rock, paper, or scissors!', '')
-    return validatePlayerInput(userInput);
-}
-
 function getComputerAnswer() {
     let getRandomNumber = Math.floor(Math.random() * 3) + 1;
     switch(getRandomNumber) {
         case 1:
-            return 'rock';
+            return 'Rock';
             break;
         case 2:
-            return 'paper';
+            return 'Paper';
             break;
         case 3:
-            return 'scissors';
+            return 'Scissors';
             break;
         default:
             return console.error('Unable to get computer answer!');
     }
 }
 
-let userAnswer = validatePlayerInput(userInput)
-let computerAnswer = getComputerAnswer();
-
-function gameResult(user, computer) {
+function playRound(user, computer) {
     if (user === computer) {
-        return `The game was a tie! User picked ${user} and computer picked ${computer}`;
-    } else if (user === 'scissors' && computer !== 'rock') {
-        return `You won! ${user} beats ${computer}!`;
-    } else if (user === 'paper' && computer !== 'scissors') {
-        return `You won! ${user} beats ${computer}!`;
-    } else if (user === 'rock' && computer !== 'paper') {
-        return `You won! ${user} beats ${computer}!`;
+        return 'tie';
+    } else if (user === 'Scissors' && computer !== 'Rock') {
+        return true;
+    } else if (user === 'Paper' && computer !== 'Scissors') {
+        return true;
+    } else if (user === 'Rock' && computer !== 'Paper') {
+        return true;
     }
-    return `You lose! ${computer} beats ${user}!`;
+    return false;
 }
 
-let finalResults = gameResult(userAnswer, computerAnswer);
+function game() {
+    let round = 1
+    let gameLoop = 0;
+    let computerScore = 0;
+    let playerScore = 0;
 
-console.log(finalResults)
+    while (gameLoop < 5) {
+        let computerAnswer = getComputerAnswer();
+        let userInput = prompt('Please enter either rock, paper, or scissors!', '');
+        
+        if (userInput === null) {
+            gameLoop = 5;
+            return console.log('No input provided or cancelled.');
+        }
 
+        userAnswer = userInput[0].toUpperCase() + userInput.substring(1).toLowerCase();
+        
+        if (userAnswer !== 'Rock' && userAnswer !== 'Paper' && userAnswer !== 'Scissors') {
+            userAnswer = getComputerAnswer();
+            console.log('Invalid player input. Computer will choose for you!');
+        }
 
+        let results = playRound(userAnswer, computerAnswer);
+        
+        if (results === true) {
+            console.log(`Round ${round}: You won! ${userAnswer} beats ${computerAnswer}!`);
+            round++;
+            gameLoop++;
+            playerScore++;
+        } else if (results === false) {
+            console.log(`Round ${round}: You lost! ${userAnswer} does not beat ${computerAnswer}!`);
+            round++ ;
+            gameLoop++ ;
+            computerScore++;
+        } else {
+            console.log(`Round ${round}: You tied! You both picked ${userAnswer}!`);
+            round++;
+        }
+    }
 
+    if (playerScore > computerScore) {
+        return `You won! Your score: ${playerScore}! Computer score: ${computerScore}!`;
+    }
+    return `You lost! Your score: ${playerScore}! Computer score: ${computerScore}!`;
+}
 
-//function playAgain(result) {
-//    console.log(result)
-//    let repeatGame = prompt('Would you like to play again', '');
-//    repeatGame = repeatGame.toLowerCase();
-//    if (repeatGame === 'yes') {
-//        return playAgain(finalResults);
-//    }
-//    return console.log('Game ended!');
-//}
+console.log(game());
